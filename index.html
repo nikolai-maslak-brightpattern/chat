@@ -1,21 +1,29 @@
 <!-- You have to put this piece of JavaScript code into your web page
 Note: Use <!DOCTYPE html> on the page where snippet located for better rendering
 -->
-<link type="text/css" rel="stylesheet" href="https://artemk.brightpattern.com/clientweb/chat-client-v4/css/form.css">
+<link type="text/css" rel="stylesheet" href="https://pavelk.brightpattern.com/clientweb/chat-client-v4/css/form.css">
 <script type="text/javascript">
     SERVICE_PATTERN_CHAT_CONFIG = {
-        appId: 'b7b2eb6b01a34428bd7559d71b07be3a',
-        apiUrl: 'https://artemk.brightpattern.com/clientweb/api/v1',
-        tenantUrl: 'artemk.brightpattern.com',
-        chatPath: 'https://artemk.brightpattern.com/clientweb/chat-client-v4/'
+        appId: '3333eb6b01a34428bd7559d71b070002',
+        apiUrl: 'https://ocean08.brightpattern.com/clientweb/api/v1',
+        tenantUrl: 'pavelk.brightpattern.com',
+        chatPath: 'https://pavelk.brightpattern.com/clientweb/chat-client-v4/',
 
-        /*        
-         // Default customer data, it can be collected on current site's context
-         first_name: '',
-         last_name: '',
-         email: '',
-         phone_number: ''
- 		*/
+        first_name: 'Nikolai',
+        last_name: 'Maslak',
+        email: `maslaknikolai${String(Math.random()).substring(2)}@ya.ru`,
+        phone_number: '+79081277147',
     };
+
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        await sleep(2000)
+        const closedWidgetHeader = document.querySelector('#sp-chat-widget')
+
+        if (closedWidgetHeader) {
+            closedWidgetHeader.click()
+        }
+    })
 </script>
-<script src="https://artemk.brightpattern.com/clientweb/chat-client-v4/js/init.js"></script> 
+<script src="https://pavelk.brightpattern.com/clientweb/chat-client-v4/js/init.js"></script> 
