@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Network</title>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
+    ></script>
+    <script type="text/javascript" src="./allNodes.js"></script>
+    <style type="text/css">
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+      #graph {
+        width: 100vw;
+        height: 100vh;
+        border: 1px solid lightgray;
+      }
+
+      #menu {
+        position: fixed;
+        height: 200px;
+        bottom: 0;
+        width: 100%;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="graph"></div>
+
+    <div id="menu"></div>
+
+    <script>
+        // const testAllNodes = {
+        //     'a': ['b', 'c', 'd'],
+        //     'b': ['d'],
+        //     'c': ['b', 'd'],
+        //     'd': ['e'],
+        //     'e': undefined,
+        // }
+        function getNodeDeps(nodeName, allNodes, level = 0) {
+            let found = {}
+
+            if (found[nodeName]) {
+                return found
+            }
+
+            const nodeDepsNames = allNodes[nodeName] || []
+
+            found[nodeName] = {
+                level: found[nodeName] ?? level,
+                deps: nodeDepsNames
+            }
+
+            found[nodeName].deps.forEach((childNode) => {
+                found = {
+                    ...found,
+                    ...getNodeDeps(childNode, allNodes, level + 1)
+                }
+            })
+
+            return found
+        }
+
+        // const getUniqueNodes = (dict) => [
+        //     ...new Set(
+        //         Object.values(dict)
+        //             .map(({ name, level }) => [name, ...depsNames])
+        //             .flat()
+        //     )
+        // ]
+
+        // const allNodeNames = getUniqueNodes(allNodes)
+        // console.log(allNodeNames);
+
+        const searchingNodeName = 'ad-wallboard'
+
+        const onlySearching = getNodeDeps(searchingNodeName, allNodes)
+        console.log(onlySearching);
+        const searchingNodeEdges = Object.entries(onlySearching)
+            .map(
+                ([nodeName, node]) => node.deps.map(
+                    depName => ({
+                        from: nodeName,
+                        to: depName,
+                    })
+                )
+            )
+            .flat()
+
+        const parsedNodes = Object.entries(onlySearching)
+            .map(([nodeName, {level}]) => ({
+                id: nodeName,
+                label: nodeName,
+                // fixed: nodeName === searchingNodeName,
+                // mass: 1 - (nodeName.match(/\[level:(\d+)\]/)[1] * .01),
+                value: 1 - (level * .2),
+                group: String(level),
+            }))
+
+        console.log(parsedNodes);
+
+        const nodes = new vis.DataSet([
+            // { id: 1, label: "Node 1" },
+            // { id: 2, label: "Node 2" },
+            // { id: 3, label: "Node 3" },
+            // { id: 4, label: "Node 4" },
+            // { id: 5, label: "Node 5" },
+
+            ...parsedNodes
+        ]);
+
+        const edges = new vis.DataSet([
+            // { from: 1, to: 3 },
+            // { from: 1, to: 2 },
+            // { from: 2, to: 4 },
+            // { from: 2, to: 5 },
+            // { from: 3, to: 3 },
+
+            ...searchingNodeEdges
+        ]);
+
+        const container = document.getElementById("graph");
+        const data = {
+            nodes: nodes,
+            edges: edges,
+        };
+        const options = {
+            "edges": {
+                "arrows": {
+                    "to": {
+                        "enabled": true
+                    }
+                },
+                "selfReferenceSize": null,
+                "selfReference": {
+                    "angle": 0.7853981633974483,
+                    "renderBehindTheNode": false
+                },
+                "smooth": false
+            },
+            "layout": {
+                "hierarchical": {
+                    "enabled": true,
+                    "nodeSpacing": 205,
+                    "treeSpacing": 245,
+                    "shakeTowards": "roots"
+                }
+            },
+            "physics": {
+                "hierarchicalRepulsion": {
+                    "centralGravity": 5.4,
+                    "springLength": 475,
+                    "springConstant": 0.045,
+                    "nodeDistance": 540,
+                    "damping": 0.47,
+                    "avoidOverlap": 1
+                },
+                "minVelocity": 0.75,
+                "solver": "hierarchicalRepulsion"
+            }
+        };
+        const network = new vis.Network(container, data, options);
+    </script>
+  </body>
+</html>
