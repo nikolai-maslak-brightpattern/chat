@@ -15,13 +15,13 @@
         }
       #graph {
         width: 100vw;
-        height: 100vh;
+        height: calc(100vh - 300px);
         border: 1px solid lightgray;
       }
 
       #menu {
         position: fixed;
-        height: 200px;
+        height: 300px;
         bottom: 0;
         width: 100%;
         overflow: auto;
@@ -129,6 +129,9 @@
             edges: edges,
         };
         const options = {
+            configure: {
+                container: document.querySelector('#menu')
+            },
             "edges": {
                 "arrows": {
                     "to": {
